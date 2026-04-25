@@ -1,0 +1,30 @@
+# MATLAB generated files
+*.asv
+*.m~
+*.autosave
+slprj/
+sccprj/
+codegen/
+*.slxc
+*.mex*
+
+# Keep editable implementation/source private
+src/
+versions/
+*.m
+*.p
+*.slx
+
+# Public toolbox artifacts are allowed
+!toolbox/*.mltbx
+
+# OS/editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local scratch/output
+*.log
+temp/
+tmp/
