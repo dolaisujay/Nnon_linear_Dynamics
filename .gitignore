@@ -15,8 +15,10 @@ versions/
 *.p
 *.slx
 
-# Public toolbox artifacts are allowed
+# Public toolbox artifacts and package metadata are allowed
 !toolbox/*.mltbx
+!resources/
+!resources/mpackage.json
 
 # OS/editor files
 .DS_Store
@@ -28,3 +30,4 @@ Thumbs.db
 *.log
 temp/
 tmp/
+

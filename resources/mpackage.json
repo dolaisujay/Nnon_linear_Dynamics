@@ -1,0 +1,20 @@
+{
+  "name": "DolaiRoyHybridVDPDuffingRC",
+  "version": "2.0.0",
+  "id": "9c2d8023-083b-4f1d-9c2a-13c98a9263c1",
+  "displayName": "Hybrid VDP-Duffing Nonlinear Dynamics Toolbox",
+  "summary": "Interactive MATLAB GUI for hybrid Van der Pol-Duffing simulation with Simscape RC and Nth-order RC ladder support.",
+  "description": "Public MATLAB toolbox distribution for hybrid Van der Pol-Duffing nonlinear dynamics. The release includes installable MATLAB toolbox artifacts for Simscape RC realization, Nth-order RC ladder modeling, nonlinear-dynamics visualization, and Arduino Due workflow support.",
+  "provider": {
+    "name": "Mr. Sujay Kumar Dolai and Dr. Somnath Roy",
+    "organization": "R&D by Bigyanlabs",
+    "url": "https://github.com/dolaisujay/Nnon_linear_Dynamics"
+  },
+  "folders": [],
+  "dependencies": [],
+  "formerNames": [
+    "Nnon_linear_Dynamics",
+    "Hybrid_VDP_Duffing_GUI_Toolbox"
+  ],
+  "schemaVersion": "1.1.0"
+}

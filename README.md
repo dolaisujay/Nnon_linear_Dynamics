@@ -82,6 +82,22 @@ docs/
 - Simscape.
 - Arduino support package is required only for Arduino Due deployment.
 
+
+## MATLAB Package Manager Metadata
+
+Package name for File Exchange / MATLAB Package Manager:
+
+```text
+DolaiRoyHybridVDPDuffingRC
+```
+
+Package version:
+
+```text
+2.0.0
+```
+
+The package definition is stored in `resources/mpackage.json`.
 ## MATLAB File Exchange Note
 
 This repository is prepared as an artifact-only public repository. Use the latest `.mltbx` file from `toolbox/` as the File Exchange upload/package artifact.
@@ -95,3 +111,4 @@ The editable development source remains private. This public repository contains
 If this toolbox is used in academic or research work, cite this repository and acknowledge the developers:
 
 Mr. Sujay Kumar Dolai and Dr. Somnath Roy, R&D by Bigyanlabs.
+
