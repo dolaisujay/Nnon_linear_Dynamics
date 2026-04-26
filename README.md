@@ -88,7 +88,7 @@ docs/
 Package name for File Exchange / MATLAB Package Manager:
 
 ```text
-BigyanlabsDolaiRoyVDPDuffingRC
+bigyanlabs_vdp_duffing_rc
 ```
 
 Package version:
@@ -111,5 +111,6 @@ The editable development source remains private. This public repository contains
 If this toolbox is used in academic or research work, cite this repository and acknowledge the developers:
 
 Mr. Sujay Kumar Dolai and Dr. Somnath Roy, R&D by Bigyanlabs.
+
 
 
