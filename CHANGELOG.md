@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1
+
+- Refreshed MATLAB Package Manager metadata for File Exchange validation.
+- Package name: dolaisujay_vdpduffing_2026.
+
 ## Public Repository Cleanup
 
 - Converted the public branch to an artifact-only distribution.
@@ -25,3 +30,5 @@
 
 - Original hybrid VDP-Duffing GUI with fixed RC realization.
 - Simulink-only and Arduino Due deployment workflows.
+
+

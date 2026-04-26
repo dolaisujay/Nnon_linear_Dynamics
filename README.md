@@ -14,7 +14,7 @@ The current release is version `2.0`, which adds Nth-order RC ladder modeling. V
 
 ## Toolbox Downloads
 
-- Latest v2.0: `toolbox/Hybrid_VDP_Duffing_GUI_v2_0_NthOrder.mltbx`
+- Latest v2.0.1: `toolbox/Hybrid_VDP_Duffing_GUI_v2_0_1_NthOrder.mltbx`
 - Original v1.0.1: `toolbox/Hybrid_VDP_Duffing_GUI_v1_0_1.mltbx`
 
 ## Main Features
@@ -45,7 +45,7 @@ The current release is version `2.0`, which adds Nth-order RC ladder modeling. V
 3. Install the toolbox using MATLAB `Add-Ons > Install from File`, or run:
 
    ```matlab
-   matlab.addons.install('toolbox/Hybrid_VDP_Duffing_GUI_v2_0_NthOrder.mltbx')
+   matlab.addons.install('toolbox/Hybrid_VDP_Duffing_GUI_v2_0_1_NthOrder.mltbx')
    ```
 
 4. Launch the GUI:
@@ -58,6 +58,7 @@ The current release is version `2.0`, which adds Nth-order RC ladder modeling. V
 
 ```text
 toolbox/
+  Hybrid_VDP_Duffing_GUI_v2_0_1_NthOrder.mltbx
   Hybrid_VDP_Duffing_GUI_v2_0_NthOrder.mltbx
   Hybrid_VDP_Duffing_GUI_v1_0_1.mltbx
 
@@ -88,13 +89,13 @@ docs/
 Package name for File Exchange / MATLAB Package Manager:
 
 ```text
-bigyanlabs_vdp_duffing_rc
+dolaisujay_vdpduffing_2026
 ```
 
 Package version:
 
 ```text
-2.0.0
+2.0.1
 ```
 
 The package definition is stored in `resources/mpackage.json`.
@@ -111,6 +112,8 @@ The editable development source remains private. This public repository contains
 If this toolbox is used in academic or research work, cite this repository and acknowledge the developers:
 
 Mr. Sujay Kumar Dolai and Dr. Somnath Roy, R&D by Bigyanlabs.
+
+
 
 
 
