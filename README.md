@@ -53,6 +53,14 @@ Hybrid_VDP_Duffing_GUI
 
 ## Installation
 
+### Option 0 — Download from GitHub Releases (recommended)
+
+Download the latest `.mltbx` from the repository **Releases** page, then install it from MATLAB:
+
+```matlab
+matlab.addons.install('Hybrid_VDP_Duffing_Toolbox_v2.1.0.mltbx')
+```
+
 ### Option A — MATLAB Toolbox (recommended)
 
 ```matlab
