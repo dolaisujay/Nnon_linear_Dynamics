@@ -17,7 +17,9 @@ function package_toolbox()
 %       >> package_toolbox
 
     src_dir  = fileparts(mfilename('fullpath'));
-    dist_dir = fullfile(src_dir, 'dist');
+    repo_root = fileparts(src_dir);
+
+    dist_dir = fullfile(repo_root, 'releases', 'dist');
     if ~isfolder(dist_dir)
         mkdir(dist_dir);
     end
@@ -40,7 +42,7 @@ function package_toolbox()
     fprintf('  -> %s  (%.1f KB)\n', src_p, dir(src_p).bytes / 1024);
 
     % ── Step 2: Toolbox options ───────────────────────────────────────────
-    opts = matlab.addons.toolbox.ToolboxOptions(src_dir, ...
+    opts = matlab.addons.toolbox.ToolboxOptions(repo_root, ...
         'b4c20a7e-1d3f-4a8b-9c6d-2e5f8a0b3c1d');   % Fixed GUID – keep same across versions
 
     opts.ToolboxName          = 'Hybrid VDP-Duffing Oscillator Workbench';
@@ -58,11 +60,12 @@ function package_toolbox()
         src_p, ...                                      % protected binary ONLY
         fullfile(src_dir, 'Contents.m'), ...
         fullfile(src_dir, 'info.xml'), ...
-        fullfile(src_dir, 'README.md') ...
+        fullfile(repo_root, 'README.md'), ...
+        fullfile(repo_root, 'LICENSE') ...
     };
 
     % Include all files from the docs/ folder (manual PDF, tex source)
-    doc_dir = fullfile(src_dir, 'docs');
+    doc_dir = fullfile(repo_root, 'docs');
     if isfolder(doc_dir)
         doc_files = dir(fullfile(doc_dir, '*'));
         for k = 1:numel(doc_files)

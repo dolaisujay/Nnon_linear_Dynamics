@@ -29,7 +29,8 @@ Key features:
 ## Quick Start
 
 ```matlab
-% From MATLAB Command Window
+% From MATLAB Command Window (repo clone)
+addpath(fullfile(pwd,'matlab'))
 Hybrid_VDP_Duffing_GUI
 ```
 
@@ -56,17 +57,17 @@ Hybrid_VDP_Duffing_GUI
 
 ```matlab
 % Build the .mltbx first (one-time step):
-cd('path/to/Hybrid_VDP_Duffing_GUI_2RC_v1')
+cd('path/to/Hybrid_VDP_Duffing_GUI_2RC_v1/matlab')
 package_toolbox()
 
 % Then install:
-matlab.addons.install(fullfile('dist','Hybrid_VDP_Duffing_Toolbox_v2.1.0.mltbx'))
+matlab.addons.install(fullfile('releases','dist','Hybrid_VDP_Duffing_Toolbox_v2.1.0.mltbx'))
 ```
 
 ### Option B — Add to path directly
 
 ```matlab
-addpath('path/to/Hybrid_VDP_Duffing_GUI_2RC_v1')
+addpath(fullfile('path/to/Hybrid_VDP_Duffing_GUI_2RC_v1','matlab'))
 savepath
 Hybrid_VDP_Duffing_GUI
 ```
@@ -77,16 +78,13 @@ Hybrid_VDP_Duffing_GUI
 
 ```
 Hybrid_VDP_Duffing_GUI_2RC_v1/
-├── Hybrid_VDP_Duffing_GUI.m        ← main GUI (single-file app)
-├── Contents.m                      ← MATLAB toolbox registry
-├── info.xml                        ← toolbox metadata
-├── package_toolbox.m               ← build the .mltbx package
-├── compile_manual.m                ← compile LaTeX manual → PDF
 ├── README.md
 ├── CHANGELOG.md
 ├── LICENSE
-├── dist/                           ← packaged toolbox releases
+├── matlab/                         ← MATLAB sources + helpers
 ├── docs/                           ← user manual (LaTeX + PDF)
+├── releases/                       ← toolbox installers (.mltbx)
+├── resources/                      ← package metadata
 └── assets/                         ← figures (kept out of git)
 ```
 

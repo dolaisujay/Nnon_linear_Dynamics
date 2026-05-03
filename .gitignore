@@ -15,7 +15,7 @@ codegen/
 # ── Toolbox package output ───────────────────────────────────────────────────
 # Ignore intermediate/draft builds but track the official release package
 *.mltbx
-!dist/Hybrid_VDP_Duffing_Toolbox_v*.mltbx
+!releases/dist/Hybrid_VDP_Duffing_Toolbox_v*.mltbx
 
 # ── LaTeX build artefacts ────────────────────────────────────────────────────
 docs/*.aux

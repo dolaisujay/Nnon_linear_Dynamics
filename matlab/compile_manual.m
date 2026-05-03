@@ -14,7 +14,9 @@
 % See `LICENSE` for full terms.
 
 function compile_manual()
-    doc_dir = fullfile(fileparts(mfilename('fullpath')), 'docs');
+    src_dir = fileparts(mfilename('fullpath'));
+    repo_root = fileparts(src_dir);
+    doc_dir = fullfile(repo_root, 'docs');
     tex_file = fullfile(doc_dir, 'HybridVDPDuffing_Manual.tex');
     pdf_file = fullfile(doc_dir, 'HybridVDPDuffing_Manual.pdf');
 
