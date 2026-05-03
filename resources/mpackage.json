@@ -1,6 +1,7 @@
 {
   "name": "dolaisujay_vdpduffing_2026",
-  "version": "2.0.1",
+  "_nameNote": "All lowercase — File Exchange validation requires no uppercase letters",
+  "version": "2.1.0",
   "id": "9c2d8023-083b-4f1d-9c2a-13c98a9263c1",
   "displayName": "Hybrid VDP-Duffing Nonlinear Dynamics Toolbox",
   "summary": "Interactive MATLAB GUI for hybrid Van der Pol-Duffing simulation with Simscape RC and Nth-order RC ladder support.",
