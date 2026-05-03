@@ -36,6 +36,12 @@ Hybrid_VDP_Duffing_GUI
 
 **Workflow:** `Build` → `Simulate` → inspect plots → `Export`
 
+## Development: push updates
+
+On Windows, you can use the helper script to commit + push (it will prompt you to log in via GitHub CLI if required):
+
+`scripts/push_to_github.bat`
+
 ---
 
 ## Requirements
