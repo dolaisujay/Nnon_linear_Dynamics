@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this software in your research, please cite it as below."
+title: "Hybrid Van der Pol–Duffing Oscillator Workbench"
+type: software
+authors:
+  - given-names: "Sujay Kumar"
+    family-names: "Dolai"
+  - given-names: "Somnath"
+    family-names: "Roy"
+version: 2.1.0
+date-released: 2026-05-04
+license: MIT
+repository-code: "https://github.com/dolaisujay/Nnon_linear_Dynamics"

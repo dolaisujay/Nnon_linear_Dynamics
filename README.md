@@ -1,119 +1,162 @@
-# Nnon_linear_Dynamics
+# Hybrid Van der Pol–Duffing Oscillator Workbench
 
-Public MATLAB toolbox distribution for hybrid Van der Pol-Duffing nonlinear dynamics with Simscape RC realization, Nth-order RC ladder modeling, analysis plots, and Arduino Due deployment support.
+> **Interactive MATLAB/Simulink/Simscape research GUI for chaotic nonlinear dynamics, fractional-order RC emulation, and Arduino Due hardware-in-the-loop (HIL) streaming.**
 
-R&D by Bigyanlabs.
+Developed by **Mr. Sujay Kumar Dolai** and **Dr. Somnath Roy** | R&D — *Bigyanlabs*
 
-Developed by Mr. Sujay Kumar Dolai and Dr. Somnath Roy.
+---
 
-## What This Repository Contains
+## What is this?
 
-This public repository is intentionally limited to installable MATLAB toolbox artifacts and documentation. Editable development source code is not included here.
+This toolbox provides a self-contained research workbench for the **Hybrid Van der Pol–Duffing (HVDPD)** parametrically-forced oscillator:
 
-The current release is version `2.0`, which adds Nth-order RC ladder modeling. Version `1.0.1` is also provided for users who need the original fixed-RC release.
+$$\ddot{x} - d(1-x^2)\dot{x} + \omega_0^2 x + \beta x^3 = f\cos(\Omega t)\bigl[1 + h\cos(\omega_p t)\bigr]$$
 
-## Toolbox Downloads
+Key features:
 
-- Latest v2.0.1: `toolbox/Hybrid_VDP_Duffing_GUI_v2_0_1_NthOrder.mltbx`
-- Original v1.0.1: `toolbox/Hybrid_VDP_Duffing_GUI_v1_0_1.mltbx`
+| Feature | Detail |
+|---|---|
+| **Simulink model builder** | Generates a clean Simulink/Simscape model from GUI parameters |
+| **Simscape RC networks** | Two independent RC sub-networks (RC_X, RC_Y) emulate fractional-order impedance (Foster-I) |
+| **Live plots** | Phase portrait · State vs forcing · Hann-windowed power spectrum |
+| **Advanced analysis** | Poincaré sections · Spectrograms · Peak-to-peak return maps |
+| **Arduino Due HIL** | Real-time DAC streaming at up to 10 kHz via fixed-step code generation |
+| **High-res export** | PNG / JPEG / FIG for all plots and Simulink diagrams |
+| **MATLAB Toolbox** | Packaged as `.mltbx` for one-click install via MATLAB Add-Ons |
 
-## Main Features
+---
 
-- Interactive light-theme MATLAB GUI.
-- Simulink-only simulation mode.
-- Arduino Due waveform deployment workflow.
-- USB scope-control workflow.
-- Simscape RC realization of the nonlinear oscillator states.
-- Configurable `RC Order (N)` for Nth-order RC ladder modeling in v2.0.
-- `Math Mode` selection in v2.0:
-  - `Raw (no compensation)` for canonical/published equation matching.
-  - `Bandwidth-compensated` for optional N-stage bandwidth scaling.
-- Plot tools:
-  - Phase portrait.
-  - State vs parametric excitation.
-  - Power spectrum.
-  - Poincare section.
-  - Spectrogram.
-  - Return map.
+## Quick Start
 
-## Installation
-
-1. Download the required `.mltbx` file from the `toolbox/` folder.
-
-2. Open MATLAB.
-
-3. Install the toolbox using MATLAB `Add-Ons > Install from File`, or run:
-
-   ```matlab
-   matlab.addons.install('toolbox/Hybrid_VDP_Duffing_GUI_v2_0_1_NthOrder.mltbx')
-   ```
-
-4. Launch the GUI:
-
-   ```matlab
-   start_Hybrid_VDP_Duffing_GUI
-   ```
-
-## Repository Layout
-
-```text
-toolbox/
-  Hybrid_VDP_Duffing_GUI_v2_0_1_NthOrder.mltbx
-  Hybrid_VDP_Duffing_GUI_v2_0_NthOrder.mltbx
-  Hybrid_VDP_Duffing_GUI_v1_0_1.mltbx
-
-docs/
-  screenshots/
-    model_snapshot.png
+```matlab
+% From MATLAB Command Window
+Hybrid_VDP_Duffing_GUI
 ```
 
-## Version 2.0 Compared With Version 1
+**Workflow:** `Build` → `Simulate` → inspect plots → `Export`
 
-- Version 1 focused on the original fixed RC realization.
-- Version 2.0 adds Nth-order RC ladder control through `RC Order (N)`.
-- Version 2.0 adds `Math Mode` for raw and bandwidth-compensated dynamics.
-- Version 2.0 separates internal ladder stage resistance from leakage resistance.
-- Version 2.0 corrects the `N=2` behavior so the output matches the expected nonlinear response.
-- Version 2.0 includes improved nonlinear-dynamics plot tools.
+---
 
 ## Requirements
 
-- MATLAB R2023b or newer.
-- Simulink.
-- Simscape.
-- Arduino support package is required only for Arduino Due deployment.
+| Component | Minimum |
+|---|---|
+| MATLAB | R2022a (9.12) |
+| Simulink | 10.5 |
+| Simscape | 5.3 |
+| Simscape Electrical | 7.7 |
+| *(optional)* Simulink Support Package for Arduino Hardware | any |
+| *(optional)* Embedded Coder | any |
 
+---
 
-## MATLAB Package Manager Metadata
+## Installation
 
-Package name for File Exchange / MATLAB Package Manager:
+### Option A — MATLAB Toolbox (recommended)
 
-```text
-dolaisujay_vdpduffing_2026
+```matlab
+% Build the .mltbx first (one-time step):
+cd('path/to/Hybrid_VDP_Duffing_GUI_2RC_v1')
+package_toolbox()
+
+% Then install:
+matlab.addons.install(fullfile('dist','Hybrid_VDP_Duffing_Toolbox_v2.1.0.mltbx'))
 ```
 
-Package version:
+### Option B — Add to path directly
 
-```text
-2.0.1
+```matlab
+addpath('path/to/Hybrid_VDP_Duffing_GUI_2RC_v1')
+savepath
+Hybrid_VDP_Duffing_GUI
 ```
 
-The package definition is stored in `resources/mpackage.json`.
-## MATLAB File Exchange Note
+---
 
-This repository is prepared as an artifact-only public repository. Use the latest `.mltbx` file from `toolbox/` as the File Exchange upload/package artifact.
+## Repository Structure
 
-## Source Code Policy
+```
+Hybrid_VDP_Duffing_GUI_2RC_v1/
+├── Hybrid_VDP_Duffing_GUI.m        ← main GUI (single-file app)
+├── Contents.m                      ← MATLAB toolbox registry
+├── info.xml                        ← toolbox metadata
+├── package_toolbox.m               ← build the .mltbx package
+├── compile_manual.m                ← compile LaTeX manual → PDF
+├── README.md
+├── CHANGELOG.md
+├── LICENSE
+├── dist/                           ← packaged toolbox releases
+├── docs/                           ← user manual (LaTeX + PDF)
+└── assets/                         ← figures (kept out of git)
+```
 
-The editable development source remains private. This public repository contains only packaged toolbox installers and documentation.
+---
+
+## Parameter Reference (defaults)
+
+| Parameter | Symbol | Default | Computed value |
+|---|---|---|---|
+| Base R | $R$ | 10 kΩ | — |
+| Capacitance | $C$ | 100 nF | — |
+| R1 | $R_1$ | 800 kΩ | $d = R/R_1 = 0.0125$ |
+| R2 | $R_2$ | 10 kΩ | $\omega_0 = \sqrt{R/R_2} = 1$ rad/s |
+| R3 | $R_3$ | 30 kΩ | $\beta = R/R_3 \approx 0.333$ |
+| Forcing amp | $f$ | 140 | $f/\Omega^2 = 1.4$ |
+| Modulation depth | $h$ | 0.2 | — |
+| Parametric freq | $\omega_p$ | 3 rad/s | — |
+| Driving freq | $\Omega$ | 10 rad/s | — |
+| Simulation time | — | 600 s | — |
+| Initial position | $x_0$ | −1 | — |
+| Initial velocity | $y_0$ | 1 | — |
+
+---
+
+## Arduino Due HIL
+
+1. Connect Due via the **programming USB port**.
+2. Select **Deploy to Arduino Due** in the Build Mode dropdown.
+3. Click **Build** (model generated even without hardware connected).
+4. If auto-detection fails, set the COM port override before building:
+
+```matlab
+arduino_due_com_port_override = 'COM7';
+```
+
+DAC channels: **DAC0** → $x(t)$, **DAC1** → $y(t)$ (XY scope display).
+
+---
+
+## Compiling the PDF Manual
+
+Install [MiKTeX](https://miktex.org) or [TeX Live](https://tug.org/texlive/), then:
+
+```matlab
+compile_manual()
+```
+
+Or upload `docs/HybridVDPDuffing_Manual.tex` to [Overleaf](https://overleaf.com) (no install needed).
+
+---
 
 ## Citation
 
-If this toolbox is used in academic or research work, cite this repository and acknowledge the developers:
+If you use this toolbox in published research, please cite:
 
-Mr. Sujay Kumar Dolai and Dr. Somnath Roy, R&D by Bigyanlabs.
+```bibtex
+@software{dolai2026hvdp,
+  author  = {Dolai, Sujay Kumar and Roy, Somnath},
+  title   = {Hybrid {Van der Pol--Duffing} Oscillator Workbench},
+  year    = {2026},
+  version = {2.1.0},
+  url     = {https://github.com/dolaisujay/Nnon_linear_Dynamics},
+  note    = {MATLAB/Simulink/Simscape toolbox, Bigyanlabs R\\&D}
+}
+```
 
+---
 
+## License
 
+MIT License — see [LICENSE](LICENSE).
 
-
+Copyright © 2024–2026 Sujay Kumar Dolai and Somnath Roy (Bigyanlabs R&D).

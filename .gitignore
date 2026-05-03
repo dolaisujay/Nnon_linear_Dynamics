@@ -1,33 +1,57 @@
-# MATLAB generated files
+# ── MATLAB generated files ──────────────────────────────────────────────────
 *.asv
 *.m~
-*.autosave
+*.p
 slprj/
-sccprj/
 codegen/
 *.slxc
 *.mex*
 
-# Keep editable implementation/source private
-src/
-versions/
-*.m
-*.p
-*.slx
+# ── Simulink autosave / derived ──────────────────────────────────────────────
+*.slx.autosave
+*.slx.bak
+*.slxp
 
-# Public toolbox artifacts and package metadata are allowed
-!toolbox/*.mltbx
-!resources/
-!resources/mpackage.json
+# ── Toolbox package output ───────────────────────────────────────────────────
+# Ignore intermediate/draft builds but track the official release package
+*.mltbx
+!dist/Hybrid_VDP_Duffing_Toolbox_v*.mltbx
 
-# OS/editor files
-.DS_Store
+# ── LaTeX build artefacts ────────────────────────────────────────────────────
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc
+docs/*.synctex.gz
+docs/*.synctex
+docs/*.fls
+docs/*.fdb_latexmk
+docs/*.bbl
+docs/*.blg
+# Keep the compiled PDF if present
+# docs/*.pdf   ← intentionally NOT ignored so you can commit a pre-built PDF
+
+# Legacy docs folder (kept out of git)
+doc/
+# doc/*.pdf   ← intentionally NOT ignored so you can commit a pre-built PDF
+
+# ── Simulation result images (generated, not source) ────────────────────────
+results_*.png
+results_*.jpg
+results_*.fig
+model_snapshot*.png
+
+# ── Windows / OS junk ───────────────────────────────────────────────────────
 Thumbs.db
-.vscode/
-.idea/
+Desktop.ini
+.DS_Store
 
-# Local scratch/output
-*.log
-temp/
-tmp/
+# ── Backup folders (keep locally, not in git) ────────────────────────────────
+archive/
 
+# Large figure exports (keep out of git)
+assets/figures/Figures.zip
+assets/figures/Figures/
+
+# Local git-history backups (created during repo sanitization)
+.git_backup_*/

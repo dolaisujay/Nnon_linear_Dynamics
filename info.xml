@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<toolbox>
+  <summary>Hybrid VDP-Duffing Oscillator Research Workbench</summary>
+  <description>
+    Interactive MATLAB/Simulink/Simscape GUI for simulating the Hybrid
+    Van der Pol-Duffing nonlinear oscillator with Simscape RC ladder
+    fractional-order sub-networks.  Supports Simulink-only analysis,
+    Arduino Due hardware-in-the-loop streaming, phase portraits,
+    Poincare sections, spectrograms, and high-resolution export.
+  </description>
+  <version>2.1.0</version>
+  <requiredMatlabVersion>9.12</requiredMatlabVersion>
+  <author>
+    <name>Sujay Kumar Dolai and Somnath Roy</name>
+    <company>Bigyanlabs R&amp;D</company>
+    <email>bigyanlabs@example.com</email>
+  </author>
+  <supportedPlatforms>
+    <platform>win64</platform>
+  </supportedPlatforms>
+  <requiredAddOns>
+    <requiredAddOn>Simulink</requiredAddOn>
+    <requiredAddOn>Simscape</requiredAddOn>
+    <requiredAddOn>Simscape Electrical</requiredAddOn>
+  </requiredAddOns>
+  <optionalAddOns>
+    <optionalAddOn>Simulink Support Package for Arduino Hardware</optionalAddOn>
+    <optionalAddOn>Embedded Coder</optionalAddOn>
+  </optionalAddOns>
+</toolbox>

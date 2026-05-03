@@ -1,0 +1,526 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{listings}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{tcolorbox}
+\usepackage{enumitem}
+\usepackage{parskip}
+
+\hypersetup{colorlinks=true,linkcolor=blue!60!black,urlcolor=blue!60!black,citecolor=blue!60!black}
+
+\definecolor{codeblue}{RGB}{0,60,120}
+\definecolor{codegray}{RGB}{240,240,245}
+\definecolor{accent}{RGB}{5,82,158}
+
+\lstset{
+  backgroundcolor=\color{codegray},
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codeblue}\bfseries,
+  commentstyle=\color{gray}\itshape,
+  frame=single, framerule=0pt,
+  breaklines=true, captionpos=b,
+  language=Matlab
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Hybrid VDP-Duffing Workbench --- User Manual v1.0}
+\lhead{\small Bigyanlabs R\&D}
+\cfoot{\thepage}
+
+\titleformat{\section}{\large\bfseries\color{accent}}{}{0em}{\thesection\quad}
+\titleformat{\subsection}{\normalsize\bfseries\color{accent!80}}{}{0em}{\thesubsection\quad}
+
+\title{
+  {\Huge\bfseries Hybrid Van der Pol--Duffing\\Oscillator Workbench}\\[1em]
+  {\Large User Manual \& Technical Reference}\\[0.5em]
+  {\large Version 1.0}
+}
+\author{
+  Mr.\ Sujay Kumar Dolai \quad\&\quad Dr.\ Somnath Roy\\[0.3em]
+  \textit{Bigyanlabs R\&D}
+}
+\date{2026}
+
+\begin{document}
+\maketitle
+\thispagestyle{empty}
+\vfill
+\begin{tcolorbox}[colback=accent!5,colframe=accent,title={\bfseries\color{white}Quick Start}]
+\begin{lstlisting}
+% In MATLAB Command Window:
+>> Hybrid_VDP_Duffing_GUI
+\end{lstlisting}
+Select parameters $\to$ click \textbf{Build} $\to$ click \textbf{Simulate} $\to$ inspect plots.
+\end{tcolorbox}
+\newpage
+
+\tableofcontents
+\newpage
+
+%% =========================================================
+\section{Introduction}
+%% =========================================================
+
+The \textbf{Hybrid VDP-Duffing Oscillator Workbench} is a self-contained MATLAB/Simulink/Simscape application that simulates and analyses the dynamics of the parametrically-forced Hybrid Van der Pol--Duffing (HVDPD) nonlinear oscillator.  The oscillator equations are solved numerically inside Simulink, while two Simscape RC sub-networks emulate fractional-order impedance elements (Foster-I representation).
+
+\subsection{Key capabilities}
+\begin{itemize}[noitemsep]
+  \item Interactive parameter panel with real-time computed parameter readout.
+  \item Three build modes: \textit{Simulink Only}, \textit{Deploy to Arduino Due}, and \textit{USB Scope Control Only}.
+  \item Live phase portrait, state-vs-forcing time-series, and Hann-windowed power spectrum.
+  \item Advanced plots: Poincar\'e sections, spectrograms, and peak-to-peak return maps.
+  \item High-resolution export (PNG / JPEG / MATLAB FIG) for all plots and Simulink model diagrams.
+  \item Arduino Due hardware-in-the-loop (HIL) DAC streaming at up to 10 kHz.
+\end{itemize}
+
+\subsection{System requirements}
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+\textbf{Component} & \textbf{Minimum Version}\\
+\midrule
+MATLAB             & R2022a (9.12)\\
+Simulink           & 10.5\\
+Simscape           & 5.3\\
+Simscape Electrical & 7.7\\
+\midrule
+\textit{Optional (HIL)} & \\
+Simulink Support Package for Arduino Hardware & any\\
+Embedded Coder     & any\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% =========================================================
+\section{Mathematical Background}
+%% =========================================================
+
+\subsection{The Hybrid VDP-Duffing equation}
+
+The oscillator is governed by the second-order ODE:
+
+\begin{equation}
+  \ddot{x} - d(1-x^2)\dot{x} + \omega_0^2 x + \beta x^3
+  = f\cos(\Omega t)\bigl[1 + h\cos(\omega_p t)\bigr]
+  \label{eq:ode}
+\end{equation}
+
+\noindent where:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Symbol & Name & Unit\\
+\midrule
+$d$          & Damping coefficient (Van der Pol)   & ---\\
+$\omega_0$   & Natural frequency                    & rad/s\\
+$\beta$      & Duffing nonlinearity coefficient     & ---\\
+$f$          & Forcing amplitude                    & ---\\
+$\Omega$     & Driving frequency                    & rad/s\\
+$h$          & Modulation depth                     & ---\\
+$\omega_p$   & Parametric modulation frequency      & rad/s\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Eq.~\eqref{eq:ode} is written as the first-order state system:
+
+\begin{align}
+  \dot{x} &= y \\
+  \dot{y} &= d(1-x^2)y - \omega_0^2 x - \beta x^3 + f\cos(\Omega t)\bigl[1+h\cos(\omega_p t)\bigr]
+\end{align}
+
+\subsection{Resistor-ratio parameterisation}
+
+The circuit constants are derived from a single base resistance $R$ and capacitance $C$:
+
+\begin{equation}
+  d = \frac{R}{R_1}, \qquad
+  \omega_0^2 = \frac{R}{R_2}, \qquad
+  \beta = \frac{R}{R_3}
+\end{equation}
+
+This maps every coefficient to a physical resistor ratio, facilitating direct hardware realisation.
+
+\subsection{Simscape RC fractional-order emulation}
+
+Each RC sub-network (RC\_X for the $x$-channel, RC\_Y for the $y$-channel) implements a parallel RC branch:
+
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Block & Role\\
+\midrule
+Controlled Current Source & Receives commanded current $I_\text{cmd} = C\dot{x}$ or $C\ddot{x}$\\
+Capacitor $C$             & Stores fractional state; outputs voltage $V_C$\\
+Resistor $R_\text{leak}$  & Parallel leakage (sets time-decay constant $\tau=RC$)\\
+Voltage Sensor            & Feeds $V_C$ back as Simulink signal\\
+Solver Configuration      & Provides Simscape network integrator\\
+Electrical Reference      & Ground node\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The Foster-I equivalent circuit of a fractional capacitor of order $\alpha$ is approximated by $N$ parallel RC branches.  In the current 2-branch implementation ($N=2$), one branch per state variable is used.
+
+%% =========================================================
+\section{Installation}
+%% =========================================================
+
+\subsection{From the .mltbx file (recommended)}
+
+\begin{lstlisting}
+% Option A -- double-click Hybrid_VDP_Duffing_Toolbox_v1.0.mltbx in Windows Explorer
+% Option B -- from MATLAB Command Window:
+matlab.addons.install('Hybrid_VDP_Duffing_Toolbox_v1.0.mltbx')
+\end{lstlisting}
+
+MATLAB will add the toolbox to the search path automatically.
+
+\subsection{Manual installation (source folder)}
+
+\begin{lstlisting}
+addpath('d:\path\to\Hybrid_VDP_Duffing_GUI_2RC_v1');
+savepath;
+\end{lstlisting}
+
+\subsection{Building the .mltbx yourself}
+
+\begin{lstlisting}
+cd('d:\path\to\Hybrid_VDP_Duffing_GUI_2RC_v1')
+package_toolbox()
+% Produces: Hybrid_VDP_Duffing_Toolbox_v1.0.mltbx
+\end{lstlisting}
+
+%% =========================================================
+\section{GUI Overview}
+%% =========================================================
+
+Launch the workbench with:
+
+\begin{lstlisting}
+Hybrid_VDP_Duffing_GUI
+\end{lstlisting}
+
+The window is divided into three regions:
+
+\begin{center}
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{Region} & \textbf{Content}\\
+\midrule
+Left panel  & All simulation parameters, circuit constants, excitation, hardware settings, and run setup.\\
+Right panel & Three live plot axes (phase portrait, state vs forcing, power spectrum) and action buttons.\\
+Top bar     & Developer credits.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Action buttons}
+
+\begin{center}
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{Button} & \textbf{Action}\\
+\midrule
+\textbf{Clean}     & Closes all Simulink models and clears workspace variables from previous runs.\\
+\textbf{Debug}     & Prints the current parameter values to the MATLAB Command Window for inspection.\\
+\textbf{Build}     & Generates the Simulink/Simscape model according to the selected build mode.\\
+\textbf{Simulate}  & Runs the model and updates all plots.\\
+\textbf{Stop}      & Stops a running simulation gracefully.\\
+\textbf{Export\ldots}    & Opens the Results Export dialog.\\
+\textbf{Model Shot\ldots} & Opens the Simulink Screenshot Export dialog.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Typical workflow:} Build $\to$ Simulate $\to$ Export.
+
+%% =========================================================
+\section{Parameter Reference}
+%% =========================================================
+
+\subsection{Mode}
+
+\begin{center}
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{Build Mode} & \textbf{Description}\\
+\midrule
+Simulink Only          & Variable-step \texttt{ode15s} solver.  No hardware required.  Fastest iteration.\\
+Deploy to Arduino Due  & Fixed-step \texttt{ode4} (RK4) code generation.  Streams DAC output to the Due.\\
+USB Scope Control Only & Simulink-only model but with oscilloscope control blocks.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Circuit Constants}
+
+\begin{center}
+\begin{tabular}{llp{7cm}}
+\toprule
+\textbf{Field} & \textbf{Default} & \textbf{Meaning}\\
+\midrule
+Base R ($\Omega$)       & $10\,\text{k}\Omega$ & Fixed reference resistance; all coefficients are ratios to this value.\\
+Capacitance C (F)       & $100\,\text{nF}$    & Simscape capacitor value.  Scales the RC time constant.\\
+R1 (for $d=R/R_1$)      & $800\,\text{k}\Omega$ & Sets Van der Pol damping $d=0.0125$.\\
+R2 (for $\omega_0^2=R/R_2$) & $10\,\text{k}\Omega$ & Sets natural frequency $\omega_0=1$ rad/s.\\
+R3 (for $\beta=R/R_3$)  & $30\,\text{k}\Omega$ & Sets Duffing coefficient $\beta\approx 0.333$.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Click \textbf{Update Computed Parameters} to refresh the readout labels $d$, $\omega_0$, $\beta$, and $f/\Omega^2$ after changing any circuit constant.
+
+\subsection{Excitation}
+
+\begin{center}
+\begin{tabular}{llp{6.5cm}}
+\toprule
+\textbf{Field} & \textbf{Default} & \textbf{Meaning}\\
+\midrule
+Forcing Amplitude ($f$)      & 140   & Amplitude of the cosine driving term.\\
+Modulation Depth ($h$)       & 0.2   & Depth of the parametric envelope (slider: 0.1--1).\\
+Parametric Freq ($\omega_p$) & 3 rad/s & Frequency of the modulation envelope (slider: 0.1--5).\\
+Driving Freq ($\Omega$)      & 10 rad/s & Frequency of the cosine carrier (slider: 1--10).\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Hardware Output (Simscape)}
+
+\begin{center}
+\begin{tabular}{llp{6.5cm}}
+\toprule
+\textbf{Field} & \textbf{Default} & \textbf{Meaning}\\
+\midrule
+Leak Resistor Rx ($\Omega$) & $1\,\text{G}\Omega$ & Parallel leakage on the RC\_X network.  Very large = near-ideal capacitor.\\
+Leak Resistor Ry ($\Omega$) & $1\,\text{G}\Omega$ & Parallel leakage on the RC\_Y network.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Arduino Due DAC Output}
+
+These controls are active only in \textit{Deploy to Arduino Due} mode.
+
+\begin{center}
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{Control} & \textbf{Description}\\
+\midrule
+Enable DAC Output    & Adds the DAC output branch to the model.\\
+Enable XY DAC1 = y(t) & Routes $y(t)$ to the second DAC channel for XY scope display.\\
+Smooth DAC Output    & Adds a first-order low-pass filter before the DAC.\\
+Physical View        & Selects the oscilloscope display mode.\\
+Sample Time (s)      & DAC update rate (min 100 $\mu$s).\\
+LPF tau (s)          & Time constant for the optional smoothing filter.\\
+Amp x                & Physical amplitude multiplier before DAC scaling.\\
+Min / Max            & Logical signal range mapped to 0--3.3 V on the Due DAC.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection{Run Setup}
+
+\begin{center}
+\begin{tabular}{llp{7cm}}
+\toprule
+\textbf{Field} & \textbf{Default} & \textbf{Meaning}\\
+\midrule
+Simulation Time (s) & 600   & Total integration time.\\
+Init Pos ($x_0$)    & $-1$  & Initial displacement.\\
+Init Vel ($\dot{x}_0 = y_0$) & $1$ & Initial velocity.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% =========================================================
+\section{Plot Panel}
+%% =========================================================
+
+After a successful simulation, three plots update automatically.
+
+\subsection{Phase Portrait}
+Shows the trajectory $(x(t),\, y(t))$ in state space.
+\begin{itemize}[noitemsep]
+  \item \textbf{Slate-blue} — transient portion (first 35\% of simulation).
+  \item \textbf{Crimson} — steady-state attractor (remaining 65\%).
+  \item \textbf{Amber circle} — initial condition $(x_0, y_0)$ with an annotated arrow.
+  \item \textbf{Red arrow} — points to a representative attractor point.
+\end{itemize}
+
+\subsection{State vs Parametric Forcing}
+Time-domain overlay of $x(t)$ (navy) and $h\cos(\omega_p t)$ (orange dashed).
+A shaded region marks the transient window; an arrow marks the onset of steady state.
+
+\subsection{Power Spectrum}
+Hann-windowed single-sided amplitude spectrum of $x(t)$ in dB.
+A dashed vertical line indicates the driving frequency $\Omega$; an annotated arrow points to the dominant spectral peak.
+
+%% =========================================================
+\section{Advanced Plots}
+%% =========================================================
+
+These standalone figure windows are accessed from the \textbf{Export} dialog or via the following buttons (if added to the toolbar):
+
+\subsection{Poincar\'e Section}
+Samples $(x(nT),\, y(nT))$ at integer multiples of the driving period $T=2\pi/\Omega$.
+A scattered cloud indicates quasi-periodic or chaotic motion; isolated points indicate period-$n$ orbits.
+
+\subsection{Spectrogram}
+Short-time Fourier transform of $x(t)$.  Reveals time-evolution of frequency content.
+
+\subsection{Return Map (Peak-to-Peak)}
+Successive peak amplitudes $x_n$ vs.\ $x_{n+1}$.  Period-doubling cascades appear as bifurcating branches.
+
+%% =========================================================
+\section{Export Functionality}
+%% =========================================================
+
+\subsection{Results Export (Export\ldots\ button)}
+
+\begin{center}
+\begin{tabular}{lp{9cm}}
+\toprule
+\textbf{Option} & \textbf{Output}\\
+\midrule
+Phase portrait      & Single-axes PNG/JPEG/FIG.\\
+State vs forcing    & Single-axes PNG/JPEG/FIG.\\
+Power spectrum      & Single-axes PNG/JPEG/FIG.\\
+Combined tiled      & 2$\times$2 layout of all three plots.\\
+Poincar\'e section  & Separate figure window exported.\\
+Spectrogram         & Separate figure window exported.\\
+Return map          & Separate figure window exported.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Supported formats: \textbf{PNG} (default, 600 DPI), \textbf{JPEG}, \textbf{MATLAB FIG}.
+
+\subsection{Model Screenshot (Model Shot\ldots\ button)}
+
+Captures the Simulink block diagram as a high-resolution image.
+
+\begin{itemize}[noitemsep]
+  \item \textbf{Top-level model} — shows ODE\_Core subsystem and I/O blocks.
+  \item \textbf{RC\_X subsystem} — Simscape RC circuit for the $x$ channel.
+  \item \textbf{RC\_Y subsystem} — Simscape RC circuit for the $y$ channel.
+\end{itemize}
+
+Set zoom percentage and tick \textit{Fit to page} for publication-ready captures.
+
+%% =========================================================
+\section{Arduino Due HIL Mode}
+%% =========================================================
+
+\subsection{Setup}
+
+\begin{enumerate}
+  \item Install the \textit{Simulink Support Package for Arduino Hardware} from MATLAB Add-On Explorer.
+  \item Connect the Arduino Due via its \textbf{programming USB port} (not the native port).
+  \item Set Build Mode to \textbf{Deploy to Arduino Due}.
+  \item Click \textbf{Build} — the model is generated and configured.
+  \item Click \textbf{Simulate} (or use the Simulink \textit{Deploy} action) to flash.
+\end{enumerate}
+
+\subsection{COM-port override}
+
+If auto-detection fails, force the port manually before clicking Build:
+
+\begin{lstlisting}
+% In MATLAB Command Window:
+arduino_due_com_port_override = 'COM7';  % replace with your port
+\end{lstlisting}
+
+\subsection{DAC scaling}
+
+The Due DAC outputs 0--3.3 V (12-bit, 4096 levels).  The GUI maps the logical range [Min, Max] linearly to this physical range:
+
+\begin{equation}
+  \text{Code} = \text{round}\!\left(\frac{x_\text{logical} - x_\text{min}}{x_\text{max} - x_\text{min}}\cdot 4095\right)
+\end{equation}
+
+For XY oscilloscope display, connect DAC0 ($x$-channel) and DAC1 ($y$-channel) to the oscilloscope inputs.
+
+%% =========================================================
+\section{Troubleshooting}
+%% =========================================================
+
+\begin{center}
+\begin{tabular}{p{5.5cm}p{8.5cm}}
+\toprule
+\textbf{Symptom} & \textbf{Remedy}\\
+\midrule
+\textit{Solver Configuration not connected} error during Simulate &
+  Click \textbf{Clean} then \textbf{Build} again.  Each RC subsystem must contain its own Solver and GND blocks.\\
+\midrule
+Export fails with \textit{Invalid parameter/value pair} &
+  Update to toolbox v1.0 -- this was a known bug in the \texttt{copy\_axes\_contents} function (fixed).\\
+\midrule
+\textit{Arduino Due was not detected} dialog on Build &
+  Set \texttt{arduino\_due\_com\_port\_override} in MATLAB workspace.  Build still completes with a placeholder port.\\
+\midrule
+Phase portrait shows only noise &
+  Increase Simulation Time or reduce $f$.  The transient window is 35\% of total time; very short runs may not reach steady state.\\
+\midrule
+Power spectrum shows no peaks &
+  Ensure $\Omega \leq 10$ rad/s (default x-axis limit). Use \textit{xlim} on the spectrum axes if $\Omega > 10$.\\
+\midrule
+\textit{SizeChangedFcn} warning on startup &
+  Fixed in v1.0 (\texttt{AutoResizeChildren} set to \texttt{off}).  Ignore if using an older copy.\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+%% =========================================================
+\section{Mathematical Appendix}
+%% =========================================================
+
+\subsection{Steady-state window}
+
+The code defines the steady-state index set as:
+\[
+  \mathcal{S} = \bigl\{i : t_i \geq t_1 + 0.35(t_N - t_1)\bigr\}
+\]
+i.e.\ the last 65\% of the simulation is treated as steady state for spectral analysis and attractor rendering.
+
+\subsection{Hann-windowed FFT}
+
+The amplitude spectrum uses a Hann (raised-cosine) window to reduce spectral leakage:
+\[
+  w[n] = \tfrac{1}{2}\!\left(1 - \cos\!\frac{2\pi n}{L-1}\right), \quad n=0,\ldots,L-1
+\]
+The single-sided magnitude (in dB) is:
+\[
+  |X(\omega_k)|_\text{dB} = 20\log_{10}\!\left(\frac{2|X_k|}{L} + \epsilon\right)
+\]
+where $\epsilon = 10^{-12}$ prevents $\log(0)$.
+
+\subsection{Poincar\'e section timing}
+
+Samples are taken at times $t_n = t_\text{start} + nT$, where $T = 2\pi/\Omega$ and $t_\text{start}$ is chosen to begin after the first 35\% of the run.  Inter-sample values are obtained by \texttt{interp1} (linear).  At least 8 samples are required.
+
+%% =========================================================
+\section*{Acknowledgements}
+%% =========================================================
+
+This toolbox was developed as part of ongoing doctoral research into fractional-order nonlinear dynamical systems.  Hardware validation was performed using GW Instek oscilloscopes and Arduino Due prototyping boards.
+
+\vspace{1em}
+\noindent\textbf{Contact:}\\
+Mr.\ Sujay Kumar Dolai \& Dr.\ Somnath Roy\\
+Bigyanlabs R\&D\\
+\texttt{bigyanlabs@example.com}
+
+\vspace{1em}
+\noindent Copyright \copyright\ 2024--2026 Bigyanlabs.  All rights reserved.
+
+\end{document}
